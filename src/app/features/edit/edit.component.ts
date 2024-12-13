@@ -1,27 +1,14 @@
 import { Component, inject } from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
+import { FormComponent } from '../../shared/components/form/form.component';
 import { Product } from '../../shared/interfaces/product.interface';
 import { ProductsService } from '../../shared/services/products.service';
 
 @Component({
   selector: 'app-edit',
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-  ],
+  imports: [FormComponent],
   templateUrl: './edit.component.html',
   styleUrl: './edit.component.scss',
 })
@@ -31,21 +18,10 @@ export class EditComponent {
   router = inject(Router);
   product: Product = inject(ActivatedRoute).snapshot.data['product'];
 
-  form = new FormGroup({
-    title: new FormControl<string>(this.product.title, {
-      nonNullable: true,
-      validators: Validators.required,
-    }),
-  });
-
-  public onSubmit(): void {
-    this.productsService
-      .put(this.product.id, {
-        title: this.form.controls.title.value,
-      })
-      .subscribe(() => {
-        this.matSnackBar.open('Produto editado com sucesso', 'Ok');
-        this.router.navigateByUrl('/');
-      });
+  public onSubmit(product: Product): void {
+    this.productsService.put(this.product.id, product).subscribe(() => {
+      this.matSnackBar.open('Produto editado com sucesso', 'Ok');
+      this.router.navigateByUrl('/');
+    });
   }
 }
