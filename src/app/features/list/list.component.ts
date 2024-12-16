@@ -1,12 +1,11 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { Router, RouterLink } from '@angular/router';
-import { filter } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { Product } from '../../shared/interfaces/product.interface';
+import { ModalService } from '../../shared/services/modal.service';
 import { ProductsService } from '../../shared/services/products.service';
 import { CardComponent } from './components/card/card.component';
-import { ModalComponent } from './components/modal/modal.component';
 
 @Component({
   selector: 'app-list',
@@ -19,10 +18,14 @@ export class ListComponent implements OnInit {
   products: Product[] = [] as Product[];
 
   productsService = inject(ProductsService);
+  modalService = inject(ModalService);
   router = inject(Router);
-  matDialog = inject(MatDialog);
 
   public ngOnInit(): void {
+    this.getAll();
+  }
+
+  private getAll(): void {
     this.productsService.getAll().subscribe((products) => {
       this.products = products;
     });
@@ -33,16 +36,11 @@ export class ListComponent implements OnInit {
   }
 
   public onDelete(id: string): void {
-    this.matDialog
-      .open(ModalComponent, {})
-      .afterClosed()
+    this.modalService
+      .open()
       .pipe(filter((answer) => answer))
       .subscribe(() => {
-        this.productsService.delete(id).subscribe(() => {
-          this.productsService.getAll().subscribe((products) => {
-            this.products = products;
-          });
-        });
+        this.productsService.delete(id).subscribe(() => this.getAll());
       });
   }
 }
