@@ -1,0 +1,17 @@
+<h2 mat-dialog-content>Deletar Produto</h2>
+<mat-dialog-content>
+    Tem certeza que deseja deletar esse porduto?
+</mat-dialog-content>
+<mat-dialog-actions [align]="'end'">
+    <button mat-button
+            (click)="onCancel()">
+        Não
+    </button>
+
+    <button color="accent"
+            mat-raised-button
+            cdkFocusInitial
+            (click)="onOk()">
+        Sim
+    </button>
+</mat-dialog-actions>
